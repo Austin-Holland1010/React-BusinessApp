@@ -11,17 +11,23 @@ using Npgsql;
 [ServiceContract]
 public interface IService
 {
+	[OperationContract]
+	[WebGet(UriTemplate = "getCustomers", ResponseFormat = WebMessageFormat.Json)]
+	string getCustomers();
 
 	[OperationContract]
-	[WebGet (UriTemplate = "PI", ResponseFormat = WebMessageFormat.Json)]
-	double PiValue();
+	[WebGet(UriTemplate = "getSpecificCustomer?firstname={firstName}&lastname={lastName}", ResponseFormat = WebMessageFormat.Json)]
+	string getSpecificCustomer(string firstName, string lastName);
 
 	[OperationContract]
-	[WebGet(UriTemplate = "add2?x={x}&y={y}", ResponseFormat = WebMessageFormat.Json)]
-	int addition(int x, int y);
-	//http://localhost:55250/Service.svc/add2?x=4&y=7
+	[WebGet(UriTemplate = "addCustomer?firstname={firstName}&lastname={lastName}&phone={phone}&address={address}&email={email}", ResponseFormat = WebMessageFormat.Json)]
+	bool addCustomer(string firstName, string lastName, string phone, string address, string email);
 
 	[OperationContract]
-	[WebGet(UriTemplate = "getCustomer?name={name}", ResponseFormat = WebMessageFormat.Json)]
-	string getCustomer(string name);
+	[WebGet(UriTemplate = "deleteCustomer?firstname={firstName}&lastname={lastName}", ResponseFormat = WebMessageFormat.Json)]
+	bool deleteCustomer(string firstName, string lastName);
+
+	[OperationContract]
+	[WebGet(UriTemplate = "updateCustomer?currentFirstName={currentFirstName}&currentLastName={currentLastName}&firstname={firstName}&lastname={lastName}&phone={phone}&address={address}&email={email}", ResponseFormat = WebMessageFormat.Json)]
+	bool updateCustomer(string currentFirstName, string currentLastName, string firstName, string lastName, string phone, string address, string email);
 }

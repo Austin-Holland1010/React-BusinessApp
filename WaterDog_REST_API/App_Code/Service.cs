@@ -8,83 +8,16 @@ using System.Text;
 using System.Data;
 using Npgsql;
 using Newtonsoft.Json;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
-
+//The Service class contains all the backend inplementations for the services
+// used by the Water Dog Pool Care React App
 public class Service : IService
 {
-    public struct Container
-    {
-        public int Id;
-        public int Col;
-        public string Value;
-    }
-
-    public string GetGazetteer(DataTable dtInput)
-    {
-        string result = null;
-        List<Container> containers = new List<Container>();
-        List<Container> finalContainers = new List<Container>();
-        StringBuilder sb = new StringBuilder();
-
-        foreach (DataRow row in dtInput.Rows)
-        {
-            Container container;
-            container = new Container() { Id = int.Parse(row[0].ToString()), Value = row[1].ToString(), Col = 1 };
-            containers.Add(container);
-            if (row[1] != row[3])
-            {
-                container = new Container() { Id = int.Parse(row[0].ToString()), Value = row[3].ToString(), Col = 2 };
-                containers.Add(container);
-            }
-        }
-
-        containers = containers.OrderBy(c => c.Value).ThenBy(c => c.Id).ToList();
-
-        if (containers.Count > 0)
-        {
-            string initialVal = containers[0].Value;
-            finalContainers.Add(containers[0]);
-            for (int i = 1; i < containers.Count; i++)
-            {
-                if (containers[i].Value == initialVal)
-                {
-                    finalContainers.Remove(containers[i]);
-                    finalContainers.Remove(containers[i - 1]);
-                    finalContainers.Add(new Container() { Id = containers[i - 1].Id, Value = "*" + containers[i - 1].Id + " is duplicate of " + containers[i].Id + "* " + containers[i - 1].Value });
-                    finalContainers.Add(new Container() { Id = containers[i].Id, Value = "*" + containers[i].Id + " is duplicate of " + containers[i - 1].Id + "* " + containers[i].Value });
-                }
-                else
-                {
-                    finalContainers.Add(containers[i]);
-                }
-
-                initialVal = containers[i].Value;
-            }
-
-            finalContainers = finalContainers.OrderBy(c => c.Id).ThenBy(c => c.Col).ToList();
-
-            foreach (Container container in finalContainers)
-            {
-                sb.Append(container.Value + "</br>");
-            }
-
-            result = sb.ToString();
-        }
-
-        return result;
-    }
-
-    public double PiValue()
-    {
-        return (System.Math.PI);
-    }
-
-    public int addition(int x, int y)
-    {
-        return (x + y);
-    }
-
-    public string getCustomer(string name)
+    //This service returns a string containing an array of JSON objects.
+    // These objects contain all the fields 
+    public string getCustomers()
     {
         try
         {
@@ -93,22 +26,17 @@ public class Service : IService
             NpgsqlCommand command = new NpgsqlCommand();
             command.Connection = conn;
             command.CommandType = CommandType.Text;
-            string temp = "\u0022";
-            command.CommandText = "SELECT * FROM customers;";
-            //return command.CommandText;
+            command.CommandText = "SELECT * FROM customers";
             NpgsqlDataAdapter nda = new NpgsqlDataAdapter(command);
-            //return "got here 1";
             DataTable dt = new DataTable();
             nda.Fill(dt);
-            //return "got here 2";
             conn.Dispose();
             conn.Close();
-            //return "Got Here";
             foreach (DataRow dataRow in dt.Rows)
             {
                 foreach (var item in dataRow.ItemArray)
                 {
-                    System.Diagnostics.Debug.WriteLine(item);
+                    //System.Diagnostics.Debug.WriteLine(item);
                     Console.WriteLine(item);
                 }
             }
@@ -120,5 +48,142 @@ public class Service : IService
             return "something broke";
         }
     }
-	
+
+    public string getSpecificCustomer(string firstName, string lastName)
+    {
+        try 
+        { 
+            NpgsqlConnection conn = new NpgsqlConnection("Server=localhost;Port=5432;Database=waterdogpool;User Id=postgres;Password=admin;");
+            conn.Open();
+            NpgsqlCommand command = new NpgsqlCommand();
+            command.Connection = conn;
+            command.CommandType = CommandType.Text;
+            command.CommandText = "SELECT * FROM customers WHERE firstname='" + firstName + "' AND lastname='" + lastName + "';";
+            //System.Diagnostics.Debug.WriteLine(command.CommandText);
+            NpgsqlDataAdapter nda = new NpgsqlDataAdapter(command);
+            DataTable dt = new DataTable();
+            nda.Fill(dt);
+            conn.Dispose();
+            conn.Close();
+            foreach (DataRow dataRow in dt.Rows)
+                {
+                    foreach (var item in dataRow.ItemArray)
+                    {
+                        //System.Diagnostics.Debug.WriteLine(item);
+                        Console.WriteLine(item);
+                }
+            }
+        return JsonConvert.SerializeObject(dt);
+    }
+        catch
+        {
+            return "something broke";
+        }
+    }
+
+
+    //This service allows takes the customer info as input and inserts the data into 
+    // a SQL database.
+    public bool addCustomer(string firstName, string lastName, string phone, string address, string email)
+    {
+        NpgsqlConnection conn = new NpgsqlConnection("Server=localhost;Port=5432;Database=waterdogpool;User Id=postgres;Password=admin;"); ;
+        NpgsqlCommand cmd = null;
+     
+        try
+        {
+            conn.Open();
+            string sql = "INSERT INTO customers (firstname, lastname, phone, email, address)" +
+                         "VALUES (:FirstName, :LastName, :Phone, :Email, :Address)";
+            cmd = new NpgsqlCommand(sql, conn);
+            cmd.Parameters.AddWithValue("FirstName", firstName);
+            cmd.Parameters.AddWithValue("LastName", lastName);
+            cmd.Parameters.AddWithValue("Phone", phone);
+            cmd.Parameters.AddWithValue("Email", address);
+            cmd.Parameters.AddWithValue("Address", email);
+            cmd.Prepare();
+            cmd.CommandType = CommandType.Text;
+            cmd.ExecuteNonQuery();
+
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
+        finally
+        {
+            if (cmd != null) cmd.Dispose();
+            if (conn != null) conn.Close();
+        }
+    }
+
+    //This service allows you to delete customers from the database as long as you know the 
+    // first and last name of the customer.
+    public bool deleteCustomer(string firstName, string lastName)
+    {
+        NpgsqlConnection conn = new NpgsqlConnection("Server=localhost;Port=5432;Database=waterdogpool;User Id=postgres;Password=admin;"); ;
+        NpgsqlCommand cmd = null;
+
+        try
+        {
+            conn.Open();
+            string sql = "DELETE FROM customers " +
+                         "WHERE firstname = '" + firstName + "' AND lastname = '" + lastName + "';";
+            cmd = new NpgsqlCommand(sql, conn);
+            System.Diagnostics.Debug.WriteLine(cmd.CommandText);
+
+            cmd.Prepare();
+            cmd.CommandType = CommandType.Text;
+            cmd.ExecuteNonQuery();
+
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
+        finally
+        {
+            if (cmd != null) cmd.Dispose();
+            if (conn != null) conn.Close();
+        }
+    }
+
+    //This service allows you to update existing records of customers as long as you know 
+    // the customers first and last name.
+    public bool updateCustomer(string currentFirstName, string currentLastName, string firstName, string lastName, string phone, string address, string email)
+    {
+        NpgsqlConnection conn = new NpgsqlConnection("Server=localhost;Port=5432;Database=waterdogpool;User Id=postgres;Password=admin;"); ;
+        NpgsqlCommand cmd = null;
+
+        try
+        {
+            conn.Open();
+            string sql = "UPDATE customers " +
+                         "SET firstname = '" + firstName + "', lastname = '" + lastName + "', phone = '"+ phone + "', email = '"+ email + "', address = '" + address + "' " +
+                         "WHERE firstname = '" + currentFirstName + "' AND lastname = '" + currentLastName + "';";
+            System.Diagnostics.Debug.WriteLine(sql);
+            cmd = new NpgsqlCommand(sql, conn);
+            cmd.Parameters.AddWithValue("FirstName", firstName);
+            cmd.Parameters.AddWithValue("LastName", lastName);
+            cmd.Parameters.AddWithValue("Phone", phone);
+            cmd.Parameters.AddWithValue("Email", address);
+            cmd.Parameters.AddWithValue("Address", email);
+            cmd.Prepare();
+            cmd.CommandType = CommandType.Text;
+            cmd.ExecuteNonQuery();
+
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
+        finally
+        {
+            if (cmd != null) cmd.Dispose();
+            if (conn != null) conn.Close();
+        }
+    }
+
 }
