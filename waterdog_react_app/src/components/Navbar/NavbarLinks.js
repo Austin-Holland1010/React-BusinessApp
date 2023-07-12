@@ -6,16 +6,16 @@ const NavbarLinks = () => {
         <div>
             <Nav>
                 <NavMenu>
-                    <NavLink to="/ViewCustomers" activeStyle>
+                    <NavLink to="/ViewCustomers">
                         View Customers
                     </NavLink>
-                    <NavLink to="/AddCustomers" activeStyle>
+                    <NavLink to="/AddCustomers">
                         Add Customer
                     </NavLink>
-                    <NavLink to="/RemoveCustomers" activeStyle>
+                    <NavLink to="/RemoveCustomers">
                         Remove Customer
                     </NavLink>
-                    <NavLink to="/EditCustomers" activeStyle>
+                    <NavLink to="/EditCustomers">
                         Edit Customer
                     </NavLink>
                 </NavMenu>
