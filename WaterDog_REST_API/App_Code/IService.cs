@@ -19,9 +19,10 @@ public interface IService
 	[WebGet(UriTemplate = "getSpecificCustomer?firstname={firstName}&lastname={lastName}", ResponseFormat = WebMessageFormat.Json)]
 	string getSpecificCustomer(string firstName, string lastName);
 
+	//http://localhost:55250/Service.svc/addCustomer?firstname=John&lastname=Smith&phone=480-567-8889&address=123%20W%20Dog%20Rd&email=email@yahoo.com&route=Friday
 	[OperationContract]
-	[WebGet(UriTemplate = "addCustomer?firstname={firstName}&lastname={lastName}&phone={phone}&address={address}&email={email}", ResponseFormat = WebMessageFormat.Json)]
-	bool addCustomer(string firstName, string lastName, string phone, string address, string email);
+	[WebGet(UriTemplate = "addCustomer?firstname={firstName}&lastname={lastName}&phone={phone}&address={address}&email={email}&route={route}", ResponseFormat = WebMessageFormat.Json)]
+	bool addCustomer(string firstName, string lastName, string phone, string address, string email, string route);
 
 	[OperationContract]
 	[WebGet(UriTemplate = "deleteCustomer?firstname={firstName}&lastname={lastName}", ResponseFormat = WebMessageFormat.Json)]

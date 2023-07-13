@@ -26,7 +26,7 @@ public class Service : IService
             NpgsqlCommand command = new NpgsqlCommand();
             command.Connection = conn;
             command.CommandType = CommandType.Text;
-            command.CommandText = "SELECT * FROM customers";
+            command.CommandText = "SELECT * FROM customers ORDER BY customers.lastname ASC";
             NpgsqlDataAdapter nda = new NpgsqlDataAdapter(command);
             DataTable dt = new DataTable();
             nda.Fill(dt);
@@ -71,10 +71,10 @@ public class Service : IService
                     {
                         //System.Diagnostics.Debug.WriteLine(item);
                         Console.WriteLine(item);
+                    }
                 }
-            }
-        return JsonConvert.SerializeObject(dt);
-    }
+            return JsonConvert.SerializeObject(dt);
+        }
         catch
         {
             return "something broke";
@@ -84,22 +84,23 @@ public class Service : IService
 
     //This service allows takes the customer info as input and inserts the data into 
     // a SQL database.
-    public bool addCustomer(string firstName, string lastName, string phone, string address, string email)
+    public bool addCustomer(string firstName, string lastName, string phone, string address, string email, string route)
     {
-        NpgsqlConnection conn = new NpgsqlConnection("Server=localhost;Port=5432;Database=waterdogpool;User Id=postgres;Password=admin;"); ;
+        NpgsqlConnection conn = new NpgsqlConnection("Server=localhost;Port=5432;Database=waterdogpool;User Id=postgres;Password=admin;");
         NpgsqlCommand cmd = null;
      
         try
         {
             conn.Open();
-            string sql = "INSERT INTO customers (firstname, lastname, phone, email, address)" +
-                         "VALUES (:FirstName, :LastName, :Phone, :Email, :Address)";
+            string sql = "INSERT INTO customers (firstname, lastname, phone, email, address, route)" +
+                         "VALUES (:FirstName, :LastName, :Phone, :Email, :Address, :Route)";
             cmd = new NpgsqlCommand(sql, conn);
             cmd.Parameters.AddWithValue("FirstName", firstName);
             cmd.Parameters.AddWithValue("LastName", lastName);
             cmd.Parameters.AddWithValue("Phone", phone);
             cmd.Parameters.AddWithValue("Email", address);
             cmd.Parameters.AddWithValue("Address", email);
+            cmd.Parameters.AddWithValue("Route", route);
             cmd.Prepare();
             cmd.CommandType = CommandType.Text;
             cmd.ExecuteNonQuery();

@@ -12,7 +12,7 @@ function App() {
       //console.log(response)
       const jsonString = await response.json()
       const toArray = JSON.parse(jsonString)
-      console.log(toArray)
+      //console.log(toArray)
       for(let x = 0; x < toArray.length; x++)
       {
         setCustomers(prevArray => [...prevArray, toArray[x]])
@@ -22,9 +22,23 @@ function App() {
     .catch(console.error)
   }, [])
 
+  async function refreshTable() {
+    const response = await fetch('http://localhost:55250/Service.svc/getCustomers');
+    setCustomers([]) //empty the array
+    const jsonString = await response.json()
+    const toArray = JSON.parse(jsonString)
+    for(let x = 0; x < toArray.length; x++)
+    {
+      setCustomers(prevArray => [...prevArray, toArray[x]])
+    }
+  }
+
   return (
     <div>
-        <Navbar customers={customers}/>
+        <Navbar 
+          customers={customers}
+          refreshTable={refreshTable}
+        />
     </div>
   );
 }
