@@ -7,7 +7,7 @@ import RemoveCustomers from "./RemoveCustomers";
 import EditCustomers from "./EditCustomers";
 
 function Navbar(props) {
-    console.log("Navbar " + props.customers)
+    //console.log("Navbar " + props.customers)
     return (
         <Router>
             <nav className="nav-top">
@@ -18,8 +18,8 @@ function Navbar(props) {
             <Routes>
                 <Route exact path='/' element={<ViewCustomers customers={props.customers}/>} />
                 <Route path='/ViewCustomers' element={<ViewCustomers customers={props.customers}/>} />
-                <Route path='/AddCustomers' element={<AddCustomers />} />
-                <Route path='/RemoveCustomers' element={<RemoveCustomers />} />
+                <Route path='/AddCustomers' element={<AddCustomers refreshTable={props.refreshTable}/>} />
+                <Route path='/RemoveCustomers' element={<RemoveCustomers refreshTable={props.refreshTable}/>} />
                 <Route path='/EditCustomers' element={<EditCustomers />} />
             </Routes>
         </Router>
