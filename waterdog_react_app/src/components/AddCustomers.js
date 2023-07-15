@@ -17,6 +17,8 @@ function AddCustomers(props) {
         }
     )
 
+    const [addedNotification, setAddedNotification] = React.useState("")
+
     function handleChange(event) {
         const {name, value, type} = event.target
         setFormData(prevData => {
@@ -31,18 +33,32 @@ function AddCustomers(props) {
 
     function handleSubmit(event) {
         event.preventDefault()
-        let url = "http://localhost:55250/Service.svc/addCustomer?firstname="
-        url = url + formData.firstName
-        url = url + "&lastname=" + formData.lastName
-        url = url + "&phone=" + formData.phone
-        url = url + "&address=" + formData.address
-        url = url + "&email=" + formData.email
-        url = url + "&route=" + formData.route
-        sendToApi(url)
+
+        if(formData.firstName === "" || formData.lastName === "")
+        {
+            setAddedNotification("Customers must have a first and last name")
+        }
+        else
+        {
+        
+            let url = "http://localhost:55250/Service.svc/addCustomer?firstname="
+            url = url + formData.firstName
+            url = url + "&lastname=" + formData.lastName
+            url = url + "&phone=" + formData.phone
+            url = url + "&address=" + formData.address
+            url = url + "&email=" + formData.email
+            url = url + "&route=" + formData.route
+            sendToApi(url)
+        }
     }
 
     async function sendToApi(url){
         const result = await fetch(url);
+        const jsonString = await result.json()
+        if(jsonString === true)
+        {
+            setAddedNotification("Customer Added!")
+        }
         props.refreshTable()
         
     }
@@ -133,6 +149,7 @@ function AddCustomers(props) {
                 <Button variant="primary" type="submit">
                     Add Customer
                 </Button>
+                <Form.Label className="added-customer-note">{addedNotification}</Form.Label>
             </Form>
         </div>
     )

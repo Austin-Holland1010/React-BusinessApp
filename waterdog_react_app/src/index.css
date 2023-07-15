@@ -62,3 +62,13 @@ nav {
   margin-left: 20px;
   margin-top: 20px;
 }
+
+.removed-customer-note {
+  margin-left: 5px;
+  color: red;
+}
+
+.added-customer-note {
+  margin-left: 5px;
+  color: green;
+}
