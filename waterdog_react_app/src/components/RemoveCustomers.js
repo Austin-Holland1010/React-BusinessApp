@@ -32,22 +32,33 @@ function RemoveCustomers(props) {
 
     function handleSubmit(event) {
         event.preventDefault()
-        let url = "http://localhost:55250/Service.svc/deleteCustomer?firstname="
-        url = url + formData.firstName
-        url = url + "&lastname=" + formData.lastName
-        sendToApi(url)   
+        if(formData.firstName === "" || formData.lastName ==="")
+        {
+            setDeleteNotification("You must enter the first and last name to delete the customer.")
+        }
+        else
+        {
+            let url = "http://localhost:55250/Service.svc/deleteCustomer?firstname="
+            url = url + formData.firstName
+            url = url + "&lastname=" + formData.lastName
+            sendToApi(url)  
+        } 
     }
 
     async function sendToApi(url){
-        const result = await fetch(url);
-        const jsonString = await result.json()
-        console.log(jsonString)
-        if(jsonString === true)
-        {
-            //console.log("Got in here")
-            setDeleteNotification("Customer Deleted!")
+        try{
+            const result = await fetch(url);
+            const jsonString = await result.json()
+            console.log(jsonString)
+            if(jsonString === true)
+            {
+                //console.log("Got in here")
+                setDeleteNotification("Customer Deleted!")
+            }
+            props.refreshTable()
+        } catch {
+            setDeleteNotification("Delete Customer Service Failed")
         }
-        props.refreshTable()
     }
 
     return (

@@ -29,6 +29,6 @@ public interface IService
 	bool deleteCustomer(string firstName, string lastName);
 
 	[OperationContract]
-	[WebGet(UriTemplate = "updateCustomer?currentFirstName={currentFirstName}&currentLastName={currentLastName}&firstname={firstName}&lastname={lastName}&phone={phone}&address={address}&email={email}", ResponseFormat = WebMessageFormat.Json)]
-	bool updateCustomer(string currentFirstName, string currentLastName, string firstName, string lastName, string phone, string address, string email);
+	[WebGet(UriTemplate = "updateCustomer?currentFirstName={currentFirstName}&currentLastName={currentLastName}&firstname={firstName}&lastname={lastName}&phone={phone}&address={address}&email={email}&route={route}", ResponseFormat = WebMessageFormat.Json)]
+	bool updateCustomer(string currentFirstName, string currentLastName, string firstName, string lastName, string phone, string address, string email, string route);
 }
