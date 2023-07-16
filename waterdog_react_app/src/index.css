@@ -70,5 +70,9 @@ nav {
 
 .added-customer-note {
   margin-left: 5px;
-  color: green;
+  color: lightgreen;
+}
+
+.FormSpacer {
+  margin-top: 20px;
 }

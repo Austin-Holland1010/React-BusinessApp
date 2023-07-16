@@ -53,13 +53,18 @@ function AddCustomers(props) {
     }
 
     async function sendToApi(url){
-        const result = await fetch(url);
-        const jsonString = await result.json()
-        if(jsonString === true)
-        {
-            setAddedNotification("Customer Added!")
+        try{
+            const result = await fetch(url);
+            const jsonString = await result.json()
+            if(jsonString === true)
+            {
+                setAddedNotification("Customer Added!")
+            }
+            props.refreshTable()
         }
-        props.refreshTable()
+        catch {
+            setAddedNotification("Add customer service failed")
+        }
         
     }
 

@@ -152,7 +152,7 @@ public class Service : IService
 
     //This service allows you to update existing records of customers as long as you know 
     // the customers first and last name.
-    public bool updateCustomer(string currentFirstName, string currentLastName, string firstName, string lastName, string phone, string address, string email)
+    public bool updateCustomer(string currentFirstName, string currentLastName, string firstName, string lastName, string phone, string address, string email, string route)
     {
         NpgsqlConnection conn = new NpgsqlConnection("Server=localhost;Port=5432;Database=waterdogpool;User Id=postgres;Password=admin;"); ;
         NpgsqlCommand cmd = null;
@@ -161,7 +161,7 @@ public class Service : IService
         {
             conn.Open();
             string sql = "UPDATE customers " +
-                         "SET firstname = '" + firstName + "', lastname = '" + lastName + "', phone = '"+ phone + "', email = '"+ email + "', address = '" + address + "' " +
+                         "SET firstname = '" + firstName + "', lastname = '" + lastName + "', phone = '"+ phone + "', email = '"+ email + "', address = '" + address + "', route = '" + route +  "' " +
                          "WHERE firstname = '" + currentFirstName + "' AND lastname = '" + currentLastName + "';";
             System.Diagnostics.Debug.WriteLine(sql);
             cmd = new NpgsqlCommand(sql, conn);
