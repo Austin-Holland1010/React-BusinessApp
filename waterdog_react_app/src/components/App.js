@@ -22,6 +22,8 @@ function App() {
     .catch(console.error)
   }, [])
 
+  console.log(customers)
+
   async function refreshTable() {
     const response = await fetch('http://localhost:55250/Service.svc/getCustomers');
     setCustomers([]) //empty the array
