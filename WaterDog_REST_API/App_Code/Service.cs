@@ -93,16 +93,17 @@ public class Service : IService
         {
             conn.Open();
             string sql = "INSERT INTO customers (firstname, lastname, phone, email, address, route)" +
-                         "VALUES (:FirstName, :LastName, :Phone, :Email, :Address, :Route)";
+                         " VALUES (:FirstName, :LastName, :Phone, :Email, :Address, :Route)";
             cmd = new NpgsqlCommand(sql, conn);
             cmd.Parameters.AddWithValue("FirstName", firstName);
             cmd.Parameters.AddWithValue("LastName", lastName);
             cmd.Parameters.AddWithValue("Phone", phone);
-            cmd.Parameters.AddWithValue("Email", address);
-            cmd.Parameters.AddWithValue("Address", email);
+            cmd.Parameters.AddWithValue("Email", email);
+            cmd.Parameters.AddWithValue("Address", address);
             cmd.Parameters.AddWithValue("Route", route);
             cmd.Prepare();
             cmd.CommandType = CommandType.Text;
+            System.Diagnostics.Debug.WriteLine(cmd.CommandText);
             cmd.ExecuteNonQuery();
 
             return true;

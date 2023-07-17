@@ -40,7 +40,7 @@ function AddCustomers(props) {
         }
         else
         {
-        
+            console.log(formData)
             let url = "http://localhost:55250/Service.svc/addCustomer?firstname="
             url = url + formData.firstName
             url = url + "&lastname=" + formData.lastName
